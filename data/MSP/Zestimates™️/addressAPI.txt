@@ -1,0 +1,5 @@
+Hennepin:
+https://opendata.arcgis.com/datasets/7a24f282f0d7497f9352519dbb3607e8_0.geojson
+
+Ramsey:
+https://opendata.arcgis.com/datasets/56fb0d3188bc40a9a4891d0e66911023_24.geojson
