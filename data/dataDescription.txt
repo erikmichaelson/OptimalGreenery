@@ -1,2 +1,0 @@
-here's my guess for what the data is going to look like ~once~ it's in Stata:
-[Address] [price] [tree cover val] [distance from park] [weighted distance from park] [crime]##[parkDistance]
