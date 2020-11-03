@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 listx=[]
 listy=[]
-sf = shp.Reader("parks/shp_bdry_admin_boundary_data/bdry_park.shp")
+sf = shp.Reader("../data/MSP/parks/shp_bdry_admin_boundary_data/bdry_park.shp")
 
 plt.figure()
 for shape in sf.shapeRecords():
