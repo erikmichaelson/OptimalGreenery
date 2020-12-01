@@ -1,7 +1,8 @@
 import warnings; warnings.filterwarnings(action='ignore')
 import matplotlib.pyplot as plt
 import geopandas as gpd
-from /longsgis.py import voronoiDiagram4plg
+from longsgis import voronoiDiagram4plg
+from bufferDissolve import bufferDissolve
 gpd.options.use_pygeos = True
 
 dataPath = "../data/MSP/parks/"
@@ -18,10 +19,18 @@ mpls.loc[:, 'geometry'].plot(ax=ax)
 mask.loc[:, 'geometry'].plot(ax=ax)
 '''
 
-print(type(mpls), type(mask))
 mask = mask.loc[:, 'geometry']
-print(mpls)
-print(mask)
-voronoiDiagram4plg(mpls, mask)
+minimpls = mpls[292:342]
+#mplsClean = bufferDissolve(minimpls, 10)
+#mplsClean.loc[:, 'geometry'].plot(ax=ax)
+#print("minifilt: ", mplsClean, type(mplsClean))
+print("mask: ", mask)
+minisp = sp[:50]
+print("mpls: ", minimpls)
+vd = voronoiDiagram4plg(minimpls, mask)
+print(vd)
+vd.loc[:, 'geometry'].plot(ax=ax)
+#minimpls.loc[:, 'geometry'].plot(ax=ax, color="black")
+minimpls.loc[:, 'geometry'].plot(ax=ax, color="black")
 
 plt.show()
