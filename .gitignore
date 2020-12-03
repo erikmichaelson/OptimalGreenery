@@ -3,3 +3,4 @@ __pycache__
 trees/
 points.*
 __init__.py
+grids.*
