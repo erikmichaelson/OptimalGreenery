@@ -26,9 +26,8 @@ def genPoints(num, mask_adr):
         a list of points (int, int) tuples
 
     """
-	mask = gpd.read_file('../data/MSP/mask/CountyMask.shp')
+	mask = gpd.read_file(mask_adr)
 	bnds = mask['geometry'].total_bounds
-	print(bnds)
 	
 	points = []
 	for k in range(num):
@@ -55,26 +54,18 @@ def genPoints(num, mask_adr):
 
 
 def avgGrndCover(points, rast_adr):
-	rast = rio.open('../data/MSP/trees/tcma_clip.tif', masked=False)
+	rast = rio.open(rast_adr, masked=False)
 
 	bnds = rast.bounds
-	print(bnds)
 
 	band1 = rast.read(1)
-	print(band1)
 	gridpoints = []
 	toReturn = []
 	
-	print(bnds[2]-bnds[0], len(band1[0]))
-	print(bnds[3]-bnds[1], len(band1))
-
-	enum = [i for i in range(1,13)]
-	print(enum)
 
 	for p in points:
 		base0 = p[0]
 		base1 = p[1]
-		print(p)
 		assert bnds[0] <= base0 <= bnds[2]
 		assert bnds[1] <= base1 <= bnds[3]
 		results = []
@@ -88,29 +79,51 @@ def avgGrndCover(points, rast_adr):
 				gridpoint = (gridpoint0+bnds[0], gridpoint1+bnds[1])
 				gridpoints.append(gridpoint)
 				results.append(output)
-		cover = Counter(results)
-		print(cover)
+		covCounter = Counter(results)
+		cover = []
+		for i in range(12):
+			cover.append((i+1, covCounter[i+1]))
 		toReturn.append(cover)
-
-	#savePointsToFile(gridpoints, 'grids')
 
 	rast.close()
 
-	print(len(toReturn))
 	assert len(toReturn) == len(points)
 
 	return toReturn
 	
 
 def savePointsToFile(array, filename):
-	print('here')
 	Points = [Point(p) for p in array]
 	geoPts = gpd.GeoSeries(Points)
-	print(geoPts)
 	geoPts.columns=['geometry']
 	geoPts.to_file(filename+ '.shp')
 
+
+
+
 if __name__ == '__main__':
-	mask = '~/Documents/AdvEconometrics/ResearchProject/code/data/MSP/mask/CountyMask.shp'
-	points = genPoints(10, mask)
-	groundCover = avgGrndCover(points, 'PASS')
+	basePath = '../data/MSP/'
+	mask = 'mask/CountyMask.shp'
+	tcma = 'trees/tcma_clip.tif'
+	park = 'parks/DistFromPark.tif'
+	enum = { 
+		1:	'Grass/Shrub',
+		2:	'Bare Soil',
+		3:	'Buildings',
+		4:	'Roads/Paved Surfaces',
+		5:	'Lakes/Ponds',
+		6:	'Deciduous Tree Canopy',
+		7:	'Coniferous Tree Canopy',
+		8:	'Agriculture',
+		9:	'Emergent Wetland',
+		10:	'Forested/Shrub Wetland',
+		11:	'River',
+		12:	'Extraction'	}
+
+	points = genPoints(10, basePath+mask)
+	groundCover = avgGrndCover(points, basePath+tcma)
+
+	pointsAndCover = zip(points, (t for t in groundCover))
+	print(pointsAndCover)
+	df = pd.DataFrame.from_records(groundCover)
+	print(df)
