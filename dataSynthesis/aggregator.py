@@ -123,7 +123,10 @@ if __name__ == '__main__':
 	points = genPoints(10, basePath+mask)
 	groundCover = avgGrndCover(points, basePath+tcma)
 
-	pointsAndCover = zip(points, (t for t in groundCover))
+	test = [[t[1] for t in row] for row in groundCover]
+	print(test)
+
+	pointsAndCover = zip(points, test)
 	print(pointsAndCover)
-	df = pd.DataFrame.from_records(groundCover)
+	df = pd.DataFrame.from_records(pointsAndCover)
 	print(df)
