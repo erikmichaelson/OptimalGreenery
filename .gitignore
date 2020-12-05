@@ -4,3 +4,5 @@ grids.*
 points.*
 __init__.py
 __pycache__
+buffered.*
+.DS_Store

@@ -48,8 +48,30 @@ def genPoints(num, mask_adr):
 
 	savePointsToFile(points, 'points')
 
-	assert len(toReturn) == len(points)
 	return points
+
+def matchPolys(points, polys):
+	"""
+  	Selects polygons that intersect with points
+
+	Uses python's random functions and shapely's Point object
+	to find random points that lie within a shapefile mask.
+
+    Parameters
+    ----------
+    points : GeoSeries
+        the number of points to generate
+    polys : GeoSeries
+        address to a shapefile where the first geometry will be used as a mask
+
+    Returns
+    -------
+    [(int, int)]
+        a list of points (int, int) tuples
+
+    """
+	geopandas.sjoin(cities, countries, how="inner", op='intersects')
+
 
 
 def rastValAtPoints(points, rast_adr):
@@ -88,6 +110,8 @@ def avgGrndCover(points, rast_adr):
 	bnds = rast.bounds
 
 	band1 = rast.read(1)
+	range0 = len(band1)
+	range1 = len(band1[0])
 	gridpoints = []
 	toReturn = []
 	
@@ -104,10 +128,11 @@ def avgGrndCover(points, rast_adr):
 				gridpoint1 = base1 - bnds[1] - j*10 + 150
 				a = int(gridpoint0)
 				b = int(gridpoint1)
-				output = band1[b][a]
-				gridpoint = (gridpoint0+bnds[0], gridpoint1+bnds[1])
-				gridpoints.append(gridpoint)
-				results.append(output)
+				if(b < range0 and a < range1):
+					output = band1[b][a]
+					gridpoint = (gridpoint0+bnds[0], gridpoint1+bnds[1])
+					gridpoints.append(gridpoint)
+					results.append(output)
 		covCounter = Counter(results)
 		cover = []
 		for i in range(12):
