@@ -37,7 +37,6 @@ def genPoints(num, mask_adr):
 			base = (base0, base1)
 			pt = Point(base)
 			poly = mask['geometry'].values[0]
-		#	print(pt, poly)
 			if(pt.within(poly)):
 				break
 			print('outside the TC')
@@ -49,7 +48,37 @@ def genPoints(num, mask_adr):
 
 	savePointsToFile(points, 'points')
 
+	assert len(toReturn) == len(points)
 	return points
+
+
+def rastValAtPoints(points, rast_adr):
+	rast = rio.open(rast_adr, masked=False)
+
+	bnds = rast.bounds
+
+	band1 = rast.read(1)
+	toReturn = []
+
+	for p in points:
+		assert bnds[0] <= p[0] <= bnds[2]
+		assert bnds[1] <= p[1] <= bnds[3]
+
+		x, y = ( p[0] , p[1] )
+		row, col = rast.index(x, y)
+		output = band1[row, col]
+
+		'''
+		a = p[0]-bnds[0]
+		b = p[1]-bnds[1]
+		print(a, b)
+		output = band1[ p[0] ][ p[1] ]
+		'''
+		toReturn.append(output)
+
+	rast.close()
+	assert len(toReturn) == len(points)
+	return toReturn
 
 
 
@@ -101,32 +130,3 @@ def savePointsToFile(array, filename):
 
 
 
-if __name__ == '__main__':
-	basePath = '../data/MSP/'
-	mask = 'mask/CountyMask.shp'
-	tcma = 'trees/tcma_clip.tif'
-	park = 'parks/DistFromPark.tif'
-	enum = { 
-		1:	'Grass/Shrub',
-		2:	'Bare Soil',
-		3:	'Buildings',
-		4:	'Roads/Paved Surfaces',
-		5:	'Lakes/Ponds',
-		6:	'Deciduous Tree Canopy',
-		7:	'Coniferous Tree Canopy',
-		8:	'Agriculture',
-		9:	'Emergent Wetland',
-		10:	'Forested/Shrub Wetland',
-		11:	'River',
-		12:	'Extraction'	}
-
-	points = genPoints(10, basePath+mask)
-	groundCover = avgGrndCover(points, basePath+tcma)
-
-	test = [[t[1] for t in row] for row in groundCover]
-	print(test)
-
-	pointsAndCover = zip(points, test)
-	print(pointsAndCover)
-	df = pd.DataFrame.from_records(pointsAndCover)
-	print(df)

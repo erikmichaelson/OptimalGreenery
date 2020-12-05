@@ -1,6 +1,6 @@
-.DS_Store
-__pycache__
-trees/
+data/MSP/Zestimates™️/County_Parcels-shp/
+data/MSP/trees/
+grids.*
 points.*
 __init__.py
-grids.*
+__pycache__
