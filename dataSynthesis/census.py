@@ -1,4 +1,5 @@
 import requests
+from concurrent.futures import ThreadPoolExecutor
 import geopandas as gpd
 import pandas as pd
 
@@ -14,7 +15,8 @@ def blockDataAtCoords(points):
 	county = blocks['COUNTYFP']
 	tract = blocks['TRACTCE']
 	group = blocks['BLKGRPCE']
-	print(group)
+	loc = zip(blocks['FID'], state, county, tract, group)
+	print(loc)
 
 	print(blocks)
 	key = 'b9ff9c9d59bd6d7ed76973dc6b5859cc644a46e6'
@@ -23,30 +25,47 @@ def blockDataAtCoords(points):
 	url = 'https://api.census.gov/data/2018/acs/acs5'
 
 	results = []
-	toReturn = gpd.GeoDataFrame(columns=['geometry','B01003_001E','B01002_001E','state','county','tract','block group'])
+
+	with ThreadPoolExecutor(max_workers=10) as executor:
+		for l in executor.map(queryAPI, blocks['FID'], state, county, tract, group):
+			print(l)
+
+	"""
 	for i in range(100):
 		step = int(len(state)/100)
 		for j in range(i*step,i*step+step):
-			print(j)
-			loc = 'state:',state[j],' county:',county[j],' tract:',tract[j]
-			bgroup = 'block group:'+group[j]
-			#print(bgroup)
-			payload = {'get':'B01003_001E,B01002_001E', 'for':bgroup, 'in':loc, 'key':key}
-			full='https://api.census.gov/data/2018/acs/acs5?get=B01003_001E&for=block%20group:*&in=state:27%20county:053&key='+key
-			r = requests.get(url, params=payload)
-			fjk = pd.read_json(r.text, orient='records')
-			row = fjk.iloc[1]
-			print(row[0], row[1])
 
-			blocks.at[j, 'blockpop'] = row[0]
-			blocks.at[j,  'avgAge' ] = row[1]
+			with ThreadPoolExecutor(max_workers=step) as executor:
+				future = executor.submit(pow, 323, 1235)
+				print(future.result())	
+
+
 
 		print(blocks)
 
 	print(blocks)
 
 	return toReturn
+	"""
 
+
+def queryAPI(FID, state, county, tract, block):
+	j = FID
+	print(j, state, county, tract, block)
+	loc = 'state:',state,' county:',county,' tract:',tract
+	bgroup = 'block group:'+group
+	#print(bgroup)
+	payload = {'get':'B01003_001E,B01002_001E', 'for':bgroup, 'in':loc, 'key':key}
+	full='https://api.census.gov/data/2018/acs/acs5?get=B01003_001E&for=block%20group:*&in=state:27%20county:053&key='+key
+	r = requests.get(url, params=payload)
+	fjk = pd.read_json(r.text, orient='records')
+	row = fjk.iloc[1]
+	print(row[0], row[1])
+
+	blocks.at[j, 'blockpop'] = row[0]
+	blocks.at[j,  'avgAge' ] = row[1]
+
+	return 'success'
 
 
 if __name__ == '__main__':
