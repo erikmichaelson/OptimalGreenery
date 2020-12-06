@@ -26,7 +26,6 @@ def blockDataAtCoords(points):
 	toReturn = gpd.GeoDataFrame(columns=['geometry','B01003_001E','B01002_001E','state','county','tract','block group'])
 	for i in range(100):
 		step = int(len(state)/100)
-	#	print(step)
 		for j in range(i*step,i*step+step):
 			print(j)
 			loc = 'state:',state[j],' county:',county[j],' tract:',tract[j]
@@ -36,16 +35,15 @@ def blockDataAtCoords(points):
 			full='https://api.census.gov/data/2018/acs/acs5?get=B01003_001E&for=block%20group:*&in=state:27%20county:053&key='+key
 			r = requests.get(url, params=payload)
 			fjk = pd.read_json(r.text, orient='records')
-			fjk.columns = fjk.iloc[0]
-			fjk.drop(fjk.index[0])
-			print(geoPts.iloc[j])
-			fjk['geometry'] = geoPts.iloc[j]
-			print(fjk)
-			toReturn = toReturn.append(fjk.iloc[1], ignore_index=True)
+			row = fjk.iloc[1]
+			print(row[0], row[1])
 
-		print(toReturn)
+			blocks.at[j, 'blockpop'] = row[0]
+			blocks.at[j,  'avgAge' ] = row[1]
 
-	print(toReturn)
+		print(blocks)
+
+	print(blocks)
 
 	return toReturn
 
