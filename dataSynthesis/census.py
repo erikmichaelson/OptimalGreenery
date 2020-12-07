@@ -34,18 +34,17 @@ def blockDataAtCoords(points, threaded):
 				if(l == None): 
 					denials += 1
 				else:
-					blocks.at[l[0], 'blockpop'] = l[1]
-					blocks.at[l[0],  'avgAge' ] = l[2]
+					blocks.at[l[0], 'blockpop'] = int(l[1])
+					blocks.at[l[0],  'avgAge' ] = float(l[2])
 			print(denials)
 
 	else:
 		for i in range(10):
 			step = int(len(state)/100)
 			for j in range(i*step,i*step+step):
-				queryAPI(blocks.at[j, 'FID'], state[j], county[j], tract[j], group[j])
-
-			print(blocks)
-		print(blocks)
+				l = queryAPI(blocks.at[j, 'FID'], state[j], county[j], tract[j], group[j])
+				blocks.at[l[0], 'blockpop'] = int(l[1])
+				blocks.at[l[0],  'avgAge' ] = float(l[2])
 
 	return blocks
 
