@@ -6,3 +6,5 @@ __init__.py
 __pycache__
 buffered.*
 .DS_Store
+noTrees.*
+unclean.*
