@@ -14,23 +14,27 @@ def blockDataAtCoords(points, threaded):
 	geoPts = geoPts.to_crs(blockfile.crs)
 	print(geoPts.crs)
 	blocks = gpd.sjoin(geoPts, blockfile, how='left', op='intersects')
+	blocks['FID'] = blocks.index
+	#print(blocks['FID'])
 	state = blocks['STATEFP']
 	county = blocks['COUNTYFP']
 	tract = blocks['TRACTCE']
 	group = blocks['BLKGRPCE']
 	loc = zip(blocks['FID'], state, county, tract, group)
-	print(loc)
+	#print(loc)
 
-	print(blocks)
+	#print(blocks)
 	og = 'https://api.census.gov/data/2018/acs/acs5?get=B01003_001E&for=block%20group:2&in=state:01%20county:025%20tract:957602&key='+key
 
 	results = []
+	#blocks['blockpop'] = 0
+	#blocks['avgAge'] = 0.0
 
 	if(threaded==True):
 		denials = 0
 		with ThreadPoolExecutor(max_workers=50) as executor:
 			for l in executor.map(queryAPI, blocks['FID'], state, county, tract, group):
-				print(l)
+				#print(l)
 				if(l == None): 
 					denials += 1
 				else:
