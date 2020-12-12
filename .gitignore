@@ -1,5 +1,4 @@
-data/MSP/Zestimates™️/County_Parcels-shp/
-data/MSP/trees/
+data/*
 grids.*
 points.*
 __init__.py
