@@ -1,7 +1,0 @@
-1. Randomly select addresses from the Hennepin/ Ramsey API
-2. Query the Zestimates API with that address
-	a) if it's in Zillow, stitch it together with the address for the first variable!
-		i. it still might not be residential, so we're going to have to clean it
-		ii. find out how to do above
-
-I guess this is it, we'll see once I start querying
