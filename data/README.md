@@ -1,8 +1,5 @@
-Data
-==============
-The data is organized by city, since each city has a slightly different format.
-Within each city folder there are python scripts (in progress) showing how the data was extracted and put together.
-As this project progresses there this will be more cohesive, followed probably by a split into "raw" and "final" data folders for what I actually run through regressions.
+This updated data folder reflects both the original and actual extets of this project, as well as GitHub's file size-limits.
 
-here's my guess for what the data is going to look like ~once~ it's in Stata:
-\[Address] \[price] \[tree cover val] \[distance from park] \[weighted distance from park] \[crime]##[parkDistance]
+The actual datasets referenced in the code were originally contained in this directory, but were removed at the time of the final push. The actual data used is provided in final/ as a shapefile for viewing by the reader.
+
+As for the original files, some almost half a gigabyte, I have included simple text files with links to their original sources, from which the final data and results can be recreated.

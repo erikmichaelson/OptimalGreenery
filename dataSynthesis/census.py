@@ -8,7 +8,7 @@ url = 'https://api.census.gov/data/2018/acs/acs5'
 
 def blockDataAtCoords(points, threaded):
 	
-	blockfile = gpd.read_file('../data/MSP/census/tl_2019_27_bg.shp')
+	blockfile = gpd.read_file('../data/MSP/census/block/tl_2019_27_bg.shp')
 	print(blockfile.crs)
 	geoPts = points.set_crs('epsg:26915')
 	geoPts = geoPts.to_crs(blockfile.crs)

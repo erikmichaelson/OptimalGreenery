@@ -116,6 +116,7 @@ def avgGrndCover(points, rast_adr):
 	toReturn = []
 	
 
+	fails = 0
 	for p in points:
 		base0 = p[0]
 		base1 = p[1]
@@ -123,21 +124,31 @@ def avgGrndCover(points, rast_adr):
 		assert bnds[1] <= base1 <= bnds[3]
 		results = []
 		for i in range(30):
-			gridpoint0 = base0 - bnds[0] - i*10 + 150 
+			gridpoint0 = base0 - i*10 + 150 
 			for j in range(30):
-				gridpoint1 = base1 - bnds[1] - j*10 + 150
-				a = int(gridpoint0)
+				gridpoint1 = base1 - j*10 + 150
+				x, y = (gridpoint0, gridpoint1)
+				row, col = rast.index(x, y)
+
+
+				"""
+				a = int(bnds[2]-gridpoint0)
 				b = int(gridpoint1)
-				if(b < range0 and a < range1):
-					output = band1[b][a]
+				"""
+				if(row < range0 and col < range1):
+					output = band1[row, col]
 					gridpoint = (gridpoint0+bnds[0], gridpoint1+bnds[1])
 					gridpoints.append(gridpoint)
 					results.append(output)
+				else:
+					fails+=1;
 		covCounter = Counter(results)
 		cover = []
 		for i in range(12):
 			cover.append((i+1, covCounter[i+1]))
 		toReturn.append(cover)
+
+	print(str(fails/(900*len(points))) + '% of points fell outside bounds')
 
 	rast.close()
 
